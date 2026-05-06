@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Surpresa ❤️</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+  text-align: center;
+  background: linear-gradient(135deg, #ffe0ec, #ffd6e0, #fff0f5);
+  overflow-x: hidden;
+}
+
+h1, h2 {
+  color: #ff4d6d;
+}
+
+button {
+  padding: 14px 28px;
+  font-size: 18px;
+  background: linear-gradient(45deg, #ff4d6d, #ff758f);
+  color: white;
+  border: none;
+  border-radius: 30px;
+}
+
+/* telas */
+#startScreen {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+#game {
+  display: none;
+}
+
+#puzzle {
+  width: min(90vw, 320px);
+  height: min(90vw, 320px);
+  margin: 20px auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  touch-action: none;
+}
+
+.piece {
+  background-image: url('foto.jpg');
+  background-size: 300% 300%;
+  border-radius: 10px;
+  user-select: none;
+  position: relative;
+}
+
+.dragging {
+  opacity: 0.7;
+  transform: scale(1.1);
+  z-index: 10;
+}
+
+/* final */
+.completed {
+  gap: 0 !important;
+}
+.completed .piece {
+  border-radius: 0;
+}
+
+/* mensagem */
+#message {
+  display: none;
+  color: #ff4d6d;
+}
+
+/* cartas */
+#cards {
+  display: none;
+  margin-top: 40px;
+}
+.card-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+.card {
+  width: 120px;
+  height: 160px;
+  perspective: 1000px;
+}
+.card-inner {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+}
+.card.flipped .card-inner {
+  transform: rotateY(180deg);
+}
+.card-front, .card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backface-visibility: hidden;
+}
+.card-front {
+  background: #ff4d6d;
+  color: white;
+}
+.card-back {
+  background: white;
+  color: #ff4d6d;
+  transform: rotateY(180deg);
+}
+
+/* efeitos */
+.confetti {
+  position: fixed;
+  width: 8px;
+  height: 8px;
+  top: -10px;
+  animation: fall 3s linear forwards;
+}
+@keyframes fall {
+  to { transform: translateY(100vh); opacity: 0; }
+}
+.heart {
+  position: fixed;
+  bottom: 0;
+  animation: floatUp 4s linear forwards;
+}
+@keyframes floatUp {
+  to { transform: translateY(-100vh); opacity: 0; }
+}
+</style>
+</head>
+
+<body>
+
+<div id="startScreen">
+  <h1>Tenho uma surpresa 💝</h1>
+  <button onclick="startGame()">Começar</button>
+</div>
+
+<div id="game">
+  <h2>Monte nosso momento 🧩❤️</h2>
+  <div id="puzzle"></div>
+
+  <div id="message">
+    💖 Feliz aniversário! ❤️<br><br>
+    <button onclick="showCards()">Abrir Surpresas 🎁</button>
+  </div>
+</div>
+
+<div id="cards">
+  <h2>Escolha seu presente 🎁</h2>
+  <div class="card-container">
+    <div class="card" onclick="flipCard(this)">
+      <div class="card-inner">
+        <div class="card-front">🎁</div>
+        <div class="card-back">Jantar ❤️</div>
+      </div>
+    </div>
+    <div class="card" onclick="flipCard(this)">
+      <div class="card-inner">
+        <div class="card-front">🎁</div>
+        <div class="card-back">R$200 💸</div>
+      </div>
+    </div>
+    <div class="card" onclick="flipCard(this)">
+      <div class="card-inner">
+        <div class="card-front">🎁</div>
+        <div class="card-back">Dia juntos 💑</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const puzzle = document.getElementById("puzzle");
+const size = 3;
+let dragged = null;
+
+/* iniciar */
+function startGame(){
+  startScreen.style.display="none";
+  game.style.display="block";
+}
+
+/* criar peças */
+let pieces = [];
+
+for(let i=0;i<size*size;i++){
+  const div = document.createElement("div");
+  div.className="piece";
+
+  const x = (i % size)*(100/(size-1));
+  const y = Math.floor(i/size)*(100/(size-1));
+
+  div.style.backgroundPosition = `${x}% ${y}%`;
+  div.dataset.index=i;
+
+  /* pointer events (touch + mouse) */
+  div.addEventListener("pointerdown", e=>{
+    dragged = div;
+    div.classList.add("dragging");
+  });
+
+  div.addEventListener("pointerup", e=>{
+    div.classList.remove("dragging");
+    dragged = null;
+  });
+
+  div.addEventListener("pointerenter", e=>{
+    if(dragged && dragged !== div){
+      const draggedNext = dragged.nextSibling;
+      puzzle.insertBefore(dragged, div);
+
+      if(draggedNext){
+        puzzle.insertBefore(div, draggedNext);
+      } else {
+        puzzle.appendChild(div);
+      }
+
+      checkWin();
+    }
+  });
+
+  pieces.push(div);
+}
+
+pieces.sort(()=>Math.random()-0.5);
+pieces.forEach(p=>puzzle.appendChild(p));
+
+/* vitória */
+function checkWin(){
+  const current = [...document.querySelectorAll(".piece")];
+  let correct=true;
+
+  current.forEach((p,i)=>{
+    if(parseInt(p.dataset.index)!==i) correct=false;
+  });
+
+  if(correct){
+    message.style.display="block";
+    puzzle.classList.add("completed");
+    confetti();
+    hearts();
+  }
+}
+
+/* efeitos */
+function confetti(){
+  for(let i=0;i<60;i++){
+    const c=document.createElement("div");
+    c.className="confetti";
+    c.style.left=Math.random()*100+"vw";
+    c.style.background=`hsl(${Math.random()*360},100%,50%)`;
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),3000);
+  }
+}
+
+function hearts(){
+  const interval=setInterval(()=>{
+    const h=document.createElement("div");
+    h.className="heart";
+    h.innerHTML="💖";
+    h.style.left=Math.random()*100+"vw";
+    document.body.appendChild(h);
+    setTimeout(()=>h.remove(),4000);
+  },300);
+  setTimeout(()=>clearInterval(interval),4000);
+}
+
+/* cartas */
+function showCards(){
+  cards.style.display="block";
+  window.scrollTo({top:document.body.scrollHeight,behavior:"smooth"});
+}
+
+function flipCard(c){
+  c.classList.toggle("flipped");
+}
+</script>
+
+</body>
+</html>
