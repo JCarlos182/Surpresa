@@ -5,10 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Surpresa ❤️</title>
 
+<!-- Fonte romântica -->
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
+
 <style>
 body {
   margin: 0;
-  font-family: Arial;
+  font-family: Arial, sans-serif;
   text-align: center;
   background: linear-gradient(135deg, #ffe0ec, #ffd6e0, #fff0f5);
   overflow-x: hidden;
@@ -23,6 +26,7 @@ button {
   color: white;
   border: none;
   border-radius: 30px;
+  cursor: pointer;
 }
 
 #startScreen {
@@ -59,11 +63,32 @@ button {
 .completed { gap: 0 !important; }
 .completed .piece { border-radius: 0; }
 
+/* Mensagem final */
 #message {
   display: none;
   color: #ff4d6d;
+  font-size: 18px;
+  line-height: 1.8;
+  max-width: 90%;
+  margin: 0 auto;
+  text-align: center;
+  font-family: 'Dancing Script', cursive;
+}
+#message p {
+  margin-bottom: 16px;
 }
 
+/* Botão da mensagem */
+#message button {
+  margin-top: 20px;
+  padding: 14px 32px;
+  font-size: 18px;
+  background: linear-gradient(45deg, #ff758f, #ff4d6d);
+  border-radius: 40px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* Cartas */
 #cards { display: none; margin-top: 40px; }
 
 .card-container {
@@ -105,6 +130,7 @@ button {
   transform: rotateY(180deg);
 }
 
+/* efeitos */
 .confetti {
   position: fixed;
   width: 8px;
@@ -139,11 +165,10 @@ button {
   <div id="puzzle"></div>
 
   <div id="message">
-    💖 Feliz aniversário, meu amor! ❤️<br><br>
-    <p>Hoje o mundo celebra o dia em que você nasceu, mas eu celebro todos os dias</p>
-    <p>A sorte de ter você ao meu lado. Que este novo ciclo seja o marco de uma fase </p>
-    <p>ainda mais incrível da nossa história infinita. Você é, sem dúvidas, a melhor </p>
-    parte da minha vida. Te amo hoje e sempre! ❤️❤️ <br><br>
+    <p>💖 Feliz aniversário, meu amor! ❤️</p>
+    <p>Hoje o mundo celebra o dia em que você nasceu, mas eu celebro todos os dias a sorte de ter você ao meu lado.</p>
+    <p>Que este novo ciclo seja o marco de uma fase ainda mais incrível da nossa história infinita.</p>
+    <p>Você é, sem dúvidas, a melhor parte da minha vida. Te amo hoje e sempre! ❤️❤️</p>
     <button onclick="showCards()">Abrir Surpresas 🎁</button>
   </div>
 </div>
