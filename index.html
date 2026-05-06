@@ -25,7 +25,6 @@ button {
   border-radius: 30px;
 }
 
-/* telas */
 #startScreen {
   height: 100vh;
   display: flex;
@@ -43,7 +42,6 @@ button {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 6px;
-  touch-action: none;
 }
 
 .piece {
@@ -51,24 +49,21 @@ button {
   background-size: 300% 300%;
   border-radius: 10px;
   user-select: none;
+  cursor: pointer;
 }
 
-.dragging {
-  opacity: 0.7;
-  transform: scale(1.05);
+.selected {
+  outline: 3px solid #ff4d6d;
 }
 
-/* final */
 .completed { gap: 0 !important; }
 .completed .piece { border-radius: 0; }
 
-/* mensagem */
 #message {
   display: none;
   color: #ff4d6d;
 }
 
-/* cartas */
 #cards { display: none; margin-top: 40px; }
 
 .card-container {
@@ -110,7 +105,6 @@ button {
   transform: rotateY(180deg);
 }
 
-/* efeitos */
 .confetti {
   position: fixed;
   width: 8px;
@@ -180,17 +174,15 @@ button {
 const puzzle = document.getElementById("puzzle");
 const size = 3;
 
-let activePiece = null;
-
-/* iniciar */
 function startGame(){
   startScreen.style.display="none";
   game.style.display="block";
 }
 
-/* criar peças */
 let pieces = [];
+let selectedPiece = null;
 
+/* criar peças */
 for(let i=0;i<size*size;i++){
   const div = document.createElement("div");
   div.className="piece";
@@ -201,37 +193,26 @@ for(let i=0;i<size*size;i++){
   div.style.backgroundPosition = `${x}% ${y}%`;
   div.dataset.index=i;
 
-  /* TOUCH REAL */
-  div.addEventListener("pointerdown", (e) => {
-    activePiece = div;
-    div.classList.add("dragging");
-  });
+  // clique/tap para selecionar e trocar
+  div.addEventListener("click", () => {
+    if (!selectedPiece) {
+      selectedPiece = div;
+      div.classList.add("selected");
+    } else if (selectedPiece === div) {
+      div.classList.remove("selected");
+      selectedPiece = null;
+    } else {
+      // troca as peças
+      const temp = document.createElement("div");
+      puzzle.insertBefore(temp, selectedPiece);
+      puzzle.insertBefore(selectedPiece, div);
+      puzzle.insertBefore(div, temp);
+      puzzle.removeChild(temp);
 
-  document.addEventListener("pointermove", (e) => {
-    if (!activePiece) return;
-
-    const el = document.elementFromPoint(e.clientX, e.clientY);
-
-    if (el && el.classList.contains("piece") && el !== activePiece) {
-
-      const next = activePiece.nextSibling;
-
-      puzzle.insertBefore(activePiece, el);
-
-      if (next) {
-        puzzle.insertBefore(el, next);
-      } else {
-        puzzle.appendChild(el);
-      }
+      selectedPiece.classList.remove("selected");
+      selectedPiece = null;
 
       checkWin();
-    }
-  });
-
-  document.addEventListener("pointerup", () => {
-    if (activePiece) {
-      activePiece.classList.remove("dragging");
-      activePiece = null;
     }
   });
 
