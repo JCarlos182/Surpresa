@@ -5,12 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Surpresa ❤️</title>
 
-<!-- Fonte romântica -->
 <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
 
 <style>
 body {
   margin: 0;
+  padding: 0 16px; /* 👈 espaçamento lateral */
   font-family: Arial, sans-serif;
   text-align: center;
   background: linear-gradient(135deg, #ffe0ec, #ffd6e0, #fff0f5);
@@ -63,22 +63,23 @@ button {
 .completed { gap: 0 !important; }
 .completed .piece { border-radius: 0; }
 
-/* Mensagem final */
+/* 💖 Mensagem melhorada */
 #message {
   display: none;
   color: #ff4d6d;
   font-size: 18px;
   line-height: 1.8;
-  max-width: 90%;
-  margin: 0 auto;
+  max-width: 500px;
+  margin: 20px auto;
+  padding: 0 10px;
   text-align: center;
   font-family: 'Dancing Script', cursive;
 }
+
 #message p {
   margin-bottom: 16px;
 }
 
-/* Botão da mensagem */
 #message button {
   margin-top: 20px;
   padding: 14px 32px;
@@ -88,7 +89,7 @@ button {
   box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 }
 
-/* Cartas */
+/* 🎁 Cartas */
 #cards { display: none; margin-top: 40px; }
 
 .card-container {
@@ -124,13 +125,27 @@ button {
 }
 
 .card-front { background: #ff4d6d; color: white; }
+
 .card-back {
   background: white;
   color: #ff4d6d;
   transform: rotateY(180deg);
 }
 
-/* efeitos */
+/* 📱 RESPONSIVO */
+@media (max-width: 500px) {
+  .card-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .card {
+    width: 140px;
+    height: 180px;
+  }
+}
+
+/* 🎉 efeitos */
 .confetti {
   position: fixed;
   width: 8px;
@@ -222,7 +237,6 @@ for(let i=0;i<size*size;i++){
   div.style.backgroundPosition = `${x}% ${y}%`;
   div.dataset.index=i;
 
-  // clique/tap para selecionar e trocar
   div.addEventListener("click", () => {
     if (!selectedPiece) {
       selectedPiece = div;
@@ -231,7 +245,6 @@ for(let i=0;i<size*size;i++){
       div.classList.remove("selected");
       selectedPiece = null;
     } else {
-      // troca as peças
       const temp = document.createElement("div");
       puzzle.insertBefore(temp, selectedPiece);
       puzzle.insertBefore(selectedPiece, div);
@@ -248,11 +261,9 @@ for(let i=0;i<size*size;i++){
   pieces.push(div);
 }
 
-/* embaralhar */
 pieces.sort(()=>Math.random()-0.5);
 pieces.forEach(p=>puzzle.appendChild(p));
 
-/* vitória */
 function checkWin(){
   const current = [...document.querySelectorAll(".piece")];
   let correct=true;
@@ -269,7 +280,6 @@ function checkWin(){
   }
 }
 
-/* efeitos */
 function confetti(){
   for(let i=0;i<60;i++){
     const c=document.createElement("div");
@@ -293,7 +303,6 @@ function hearts(){
   setTimeout(()=>clearInterval(interval),4000);
 }
 
-/* cartas */
 function showCards(){
   cards.style.display="block";
   window.scrollTo({top:document.body.scrollHeight,behavior:"smooth"});
